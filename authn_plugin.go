@@ -5,11 +5,25 @@ import (
 	"github.com/cesanta/docker_auth/auth_server/authn"
 )
 
-type authenticator string
+type PluginAuthnConfig struct {
+	PluginPath string `yaml:"plugin_path"`
+	Authn      authn.Authenticator
+}
 
-func (a authenticator) Authenticate(user, password string) (bool, authn.Labels, error) {
-	fmt.Println(user, password)
+type PluginAuthn struct {
+	cfg *PluginAuthnConfig
+}
+
+func (c *PluginAuthn) Authenticate(user string, password authn.PasswordString) (bool, authn.Labels, error) {
+	fmt.Println(user, string(password))
 	return true, make(map[string][]string), nil
 }
 
-var Authn authenticator
+func (c *PluginAuthn) Stop() {
+}
+
+func (c *PluginAuthn) Name() string {
+	return "plugin auth"
+}
+
+var Authn PluginAuthn
